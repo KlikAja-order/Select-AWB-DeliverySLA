@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ANTERAJA DASHBOARD - LAST OP CODE</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --primary: #e30613;
+    --secondary: #632a8c;
+    --bg: #f1f5f9;
+    --card: #ffffff;
+    --text: #1e293b;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    margin: 0;
+}
+
+.container {
+    padding: 15px;
+}
+
+/* Card */
+.card {
+    background: var(--card);
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #e2e8f0;
+}
+
+/* Judul */
+h2 {
+    margin: 0 0 10px 0;
+    color: var(--secondary);
+    font-weight: 900;
+    font-size: 18px;
+}
+
+/* Panduan */
+.guide {
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.guide ol {
+    padding-left: 18px;
+}
+
+.guide li {
+    margin-bottom: 6px;
+}
+
+/* Input */
+input[type="file"] {
+    width: 100%;
+    padding: 20px;
+    border: 2px dashed #cbd5e1;
+    border-radius: 12px;
+    cursor: pointer;
+    background: #f8fafc;
+}
+
+input[type="text"] {
+    padding: 14px;
+    border-radius: 10px;
+    border: 1px solid #cbd5e1;
+    font-size: 14px;
+    width: 100%;
+}
+
+/* Button */
+.btn {
+    padding: 14px;
+    border-radius: 10px;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 14px;
+    width: 100%;
+}
+
+.btn-copy {
+    background: var(--secondary);
+    color: white;
+}
+
+/* Layout */
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* Filter */
+.filter-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.filter-group label {
+    background: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Table */
+.table-wrapper {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 500px;
+}
+
+th {
+    background: #f8fafc;
+    padding: 10px;
+    text-align: left;
+    border-bottom: 2px solid #e2e8f0;
+    font-size: 12px;
+    color: var(--secondary);
+}
+
+td {
+    padding: 10px;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 13px;
+}
+
+/* Desktop */
+@media(min-width:768px){
+    .container {
+        max-width: 900px;
+        margin: auto;
+    }
+
+    .control-group {
+        flex-direction: row;
+    }
+
+    .btn {
+        width: auto;
+    }
+
+    input[type="text"] {
+        width: 300px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- PANDUAN -->
+    <div class="card guide">
+        <h2> Cara Penggunaan</h2>
+        <ol>
+            <li>Download file <b>Delivery SLA Summary</b> dari menu <b>Awere</b></li>
+            <li>Ekstrak file hasil download (biasanya format .zip)</li>
+            <li>Upload file tersebut ke web app ini</li>
+            <li>Pilih / filter <b>OP Code</b> yang dibutuhkan</li>
+            <li>Klik tombol <b> COPY LIST AWB</b></li>
+            <li>Paste hasilnya ke WhatsApp / sistem yang kamu gunakan</li>
+        </ol>
+    </div>
+
+    <!-- FILTER -->
+    <div class="card">
+        <h2>Filter Status AWB</h2>
+
+        <input type="file" id="f1" accept=".csv,.txt">
+
+        <div class="control-group">
+            <input type="text" id="src1" placeholder="Cari AWB..." oninput="renderTable()">
+            <button class="btn btn-copy" onclick="copyAwb()"> COPY LIST AWB</button>
+        </div>
+
+        <div id="filters" class="filter-group"></div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="card">
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>NOMOR AWB</th>
+                        <th>LATEST OP CODE</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<script>
+let data = [];
+
+// Load File
+document.getElementById('f1').onchange = function(e) {
+    if (!e.target.files[0]) return;
+
+    let reader = new FileReader();
+
+    reader.onload = function(ex) {
+        let rows = ex.target.result.split('\n').filter(r => r.trim());
+        if (rows.length < 2) return alert("File kosong atau format salah!");
+
+        let header = rows[0].split('|').map(x => x.toLowerCase().trim());
+
+        let awbIndex = header.findIndex(x => x.includes('awb'));
+        let opIndex = header.findIndex(x => x.includes('latest_op_code') && !x.includes('ext'));
+
+        data = rows.slice(1).map(r => {
+            let cols = r.split('|');
+            return {
+                awb: cols[awbIndex]?.trim() || '',
+                op: cols[opIndex]?.trim() || 'N/A'
+            };
+        }).filter(x => x.awb);
+
+        renderFilters();
+        renderTable();
+    };
+
+    reader.readAsText(e.target.files[0]);
+};
+
+// Render Filter
+function renderFilters() {
+    let uniqueOps = [...new Set(data.map(x => x.op))].sort();
+
+    document.getElementById('filters').innerHTML = uniqueOps.map(op => `
+        <label>
+            <input type="checkbox" value="${op}" checked onchange="renderTable()">
+            ${op}
+        </label>
+    `).join('');
+}
+
+// Render Table
+function renderTable() {
+    let search = document.getElementById('src1').value.toLowerCase().trim();
+    let selected = Array.from(document.querySelectorAll('#filters input:checked')).map(c => c.value);
+
+    let filtered = data.filter(x =>
+        x.awb.toLowerCase().includes(search) &&
+        selected.includes(x.op)
+    );
+
+    document.getElementById('tableBody').innerHTML = filtered.map(x => `
+        <tr>
+            <td><b>${x.awb}</b></td>
+            <td style="color:var(--primary); font-weight:bold">${x.op}</td>
+        </tr>
+    `).join('');
+
+    window.currentAwbList = filtered.map(x => x.awb);
+}
+
+// Copy
+function copyAwb() {
+    if (!window.currentAwbList || window.currentAwbList.length === 0) {
+        return alert('Data tidak ditemukan!');
+    }
+
+    navigator.clipboard.writeText(window.currentAwbList.join('\n'))
+        .then(() => alert('✅ List AWB berhasil disalin!'));
+}
+</script>
+
+</body>
+</html>
