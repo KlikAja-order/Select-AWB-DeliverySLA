@@ -1,291 +1,374 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ANTERAJA DASHBOARD - LAST OP CODE</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anteraja Dashboard - Last OP Code</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #e30613;
+            --primary-soft: #fdebee;
+            --secondary: #632a8c;
+            --secondary-soft: #f3e8ff;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+        }
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
+        * { box-sizing: border-box; }
 
-<style>
-:root {
-    --primary: #e30613;
-    --secondary: #632a8c;
-    --bg: #f1f5f9;
-    --card: #ffffff;
-    --text: #1e293b;
-}
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            line-height: 1.6;
+        }
 
-body {
-    font-family: 'Inter', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    margin: 0;
-}
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
-.container {
-    padding: 15px;
-}
+        /* Header Styles */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
 
-/* Card */
-.card {
-    background: var(--card);
-    padding: 15px;
-    border-radius: 12px;
-    margin-bottom: 15px;
-    border: 1px solid #e2e8f0;
-}
+        .header h1 {
+            color: var(--secondary);
+            font-weight: 800;
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
 
-/* Judul */
-h2 {
-    margin: 0 0 10px 0;
-    color: var(--secondary);
-    font-weight: 900;
-    font-size: 18px;
-}
+        /* Card Base */
+        .card {
+            background: var(--card);
+            padding: 24px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+        }
 
-/* Panduan */
-.guide {
-    font-size: 14px;
-    line-height: 1.6;
-}
+        h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 0 15px 0;
+            color: var(--text-main);
+            font-size: 18px;
+            font-weight: 700;
+        }
 
-.guide ol {
-    padding-left: 18px;
-}
+        /* Instructions */
+        .guide-list {
+            padding-left: 20px;
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
 
-.guide li {
-    margin-bottom: 6px;
-}
+        .guide-list li { margin-bottom: 8px; }
 
-/* Input */
-input[type="file"] {
-    width: 100%;
-    padding: 20px;
-    border: 2px dashed #cbd5e1;
-    border-radius: 12px;
-    cursor: pointer;
-    background: #f8fafc;
-}
+        /* File Upload Area */
+        .upload-area {
+            position: relative;
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            background: #fafafa;
+            margin-bottom: 20px;
+        }
 
-input[type="text"] {
-    padding: 14px;
-    border-radius: 10px;
-    border: 1px solid #cbd5e1;
-    font-size: 14px;
-    width: 100%;
-}
+        .upload-area:hover { border-color: var(--secondary); background: var(--secondary-soft); }
 
-/* Button */
-.btn {
-    padding: 14px;
-    border-radius: 10px;
-    border: none;
-    font-weight: 700;
-    cursor: pointer;
-    font-size: 14px;
-    width: 100%;
-}
+        input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
 
-.btn-copy {
-    background: var(--secondary);
-    color: white;
-}
+        .upload-label { color: var(--text-muted); font-weight: 600; }
 
-/* Layout */
-.control-group {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 10px;
-}
+        /* Controls */
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
 
-/* Filter */
-.filter-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 10px;
-}
+        input[type="text"] {
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            font-size: 14px;
+            outline: none;
+            transition: 0.2s;
+        }
 
-.filter-group label {
-    background: white;
-    padding: 6px 10px;
-    border-radius: 6px;
-    border: 1px solid #cbd5e1;
-    font-size: 12px;
-    font-weight: 600;
-}
+        input[type="text"]:focus { border-color: var(--secondary); ring: 2px var(--secondary-soft); }
 
-/* Table */
-.table-wrapper {
-    overflow-x: auto;
-}
+        .btn {
+            background: var(--secondary);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.1s, opacity 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 500px;
-}
+        .btn:active { transform: scale(0.98); }
+        .btn:hover { opacity: 0.9; }
 
-th {
-    background: #f8fafc;
-    padding: 10px;
-    text-align: left;
-    border-bottom: 2px solid #e2e8f0;
-    font-size: 12px;
-    color: var(--secondary);
-}
+        /* Filter Chips */
+        .filter-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border);
+        }
 
-td {
-    padding: 10px;
-    border-bottom: 1px solid #f1f5f9;
-    font-size: 13px;
-}
+        .chip {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--bg);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            user-select: none;
+        }
 
-/* Desktop */
-@media(min-width:768px){
-    .container {
-        max-width: 900px;
-        margin: auto;
-    }
+        .chip input { cursor: pointer; }
+        .chip:has(input:checked) { background: var(--secondary-soft); border-color: var(--secondary); color: var(--secondary); }
 
-    .control-group {
-        flex-direction: row;
-    }
+        /* Table */
+        .table-wrapper {
+            margin-top: 10px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
 
-    .btn {
-        width: auto;
-    }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
 
-    input[type="text"] {
-        width: 300px;
-    }
-}
-</style>
+        th {
+            background: #f1f5f9;
+            padding: 12px 15px;
+            text-align: left;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+        }
+
+        td { padding: 12px 15px; border-bottom: 1px solid var(--border); }
+
+        .badge-op {
+            background: var(--primary-soft);
+            color: var(--primary);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 12px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 600px) {
+            .controls { grid-template-columns: 1fr; }
+            .btn { justify-content: center; }
+        }
+    </style>
 </head>
-
 <body>
 
 <div class="container">
+    <header class="header">
+        <h1>SS BLHR0</h1>
+        <p style="color: var(--text-muted); margin-top: 5px;">Last OP Code AWB Filter</p>
+    </header>
 
-    <!-- PANDUAN -->
-    <div class="card guide">
-        <h2> Cara Penggunaan</h2>
-        <ol>
-            <li>Download file <b>Delivery SLA Summary</b> dari menu <b>Awere</b></li>
-            <li>Ekstrak file hasil download (biasanya format .zip)</li>
-            <li>Upload file tersebut ke web app ini</li>
-            <li>Pilih / filter <b>OP Code</b> yang dibutuhkan</li>
-            <li>Klik tombol <b> COPY LIST AWB</b></li>
-            <li>Paste hasilnya ke WhatsApp / sistem yang kamu gunakan</li>
+    <div class="card">
+        <h2>📖 Panduan</h2>
+        <ol class="guide-list">
+            <li>Download <b>Delivery SLA Summary</b> dari menu <b>Awere</b></li>
+            <li>Ekstrak file ZIP dan upload file <b>.csv / .txt</b> di bawah</li>
+            <li>Gunakan filter OP Code jika hanya ingin mengambil status tertentu</li>
+            <li>Salin hasil list AWB untuk kebutuhan broadcast/input sistem</li>
         </ol>
     </div>
 
-    <!-- FILTER -->
     <div class="card">
-        <h2>Filter Status AWB</h2>
-
-        <input type="file" id="f1" accept=".csv,.txt">
-
-        <div class="control-group">
-            <input type="text" id="src1" placeholder="Cari AWB..." oninput="renderTable()">
-            <button class="btn btn-copy" onclick="copyAwb()"> COPY LIST AWB</button>
+        <h2>📤 Upload & Filter</h2>
+        <div class="upload-area" id="dropZone">
+            <span class="upload-label" id="fileName">Klik atau Taruh File di Sini</span>
+            <input type="file" id="f1" accept=".csv,.txt">
         </div>
 
-        <div id="filters" class="filter-group"></div>
+        <div class="controls">
+            <input type="text" id="src1" placeholder="Cari Nomor AWB..." oninput="renderTable()">
+            <button class="btn" onclick="copyAwb()">
+                <span>📋</span> COPY LIST AWB
+            </button>
+        </div>
+
+        <div id="filters" class="filter-group">
+            <!-- Chips rendered here -->
+        </div>
     </div>
 
-    <!-- TABLE -->
-    <div class="card">
+    <div class="card" style="padding: 0;">
         <div class="table-wrapper">
             <table>
                 <thead>
                     <tr>
-                        <th>NOMOR AWB</th>
-                        <th>LATEST OP CODE</th>
+                        <th>Nomor AWB</th>
+                        <th>Latest OP Code</th>
                     </tr>
                 </thead>
-                <tbody id="tableBody"></tbody>
+                <tbody id="tableBody">
+                    <tr>
+                        <td colspan="2" class="empty-state">Belum ada data. Silakan upload file.</td>
+                    </tr>
+                </tbody>
             </table>
         </div>
     </div>
-
 </div>
 
 <script>
 let data = [];
 
-// Load File
 document.getElementById('f1').onchange = function(e) {
-    if (!e.target.files[0]) return;
+    const file = e.target.files[0];
+    if (!file) return;
 
+    document.getElementById('fileName').textContent = file.name;
     let reader = new FileReader();
 
     reader.onload = function(ex) {
-        let rows = ex.target.result.split('\n').filter(r => r.trim());
-        if (rows.length < 2) return alert("File kosong atau format salah!");
+        try {
+            // Pecah per baris dan bersihkan spasi
+            let rows = ex.target.result.split(/\r?\n/).filter(r => r.trim());
+            if (rows.length < 2) throw new Error("File tidak memiliki data yang cukup.");
 
-        let header = rows[0].split('|').map(x => x.toLowerCase().trim());
+            // Deteksi header (menggunakan pipe | sesuai standar Awere)
+            let header = rows[0].split('|').map(x => x.toLowerCase().trim());
+            
+            let awbIndex = header.findIndex(x => x === 'awb_no' || x === 'awb' || x.includes('waybill'));
+            let opIndex = header.findIndex(x => x.includes('latest_op_code') && !x.includes('ext'));
 
-        let awbIndex = header.findIndex(x => x.includes('awb'));
-        let opIndex = header.findIndex(x => x.includes('latest_op_code') && !x.includes('ext'));
+            if (awbIndex === -1) throw new Error("Kolom AWB tidak ditemukan!");
 
-        data = rows.slice(1).map(r => {
-            let cols = r.split('|');
-            return {
-                awb: cols[awbIndex]?.trim() || '',
-                op: cols[opIndex]?.trim() || 'N/A'
-            };
-        }).filter(x => x.awb);
+            data = rows.slice(1).map(r => {
+                let cols = r.split('|');
+                return {
+                    awb: cols[awbIndex]?.trim() || '',
+                    op: cols[opIndex]?.trim() || 'N/A'
+                };
+            }).filter(x => x.awb.length > 5); // Filter string kosong atau noise
 
-        renderFilters();
-        renderTable();
+            renderFilters();
+            renderTable();
+        } catch (err) {
+            alert("Gagal membaca file: " + err.message);
+        }
     };
 
-    reader.readAsText(e.target.files[0]);
+    reader.readAsText(file);
 };
 
-// Render Filter
 function renderFilters() {
     let uniqueOps = [...new Set(data.map(x => x.op))].sort();
+    const container = document.getElementById('filters');
+    
+    if(uniqueOps.length === 0) {
+        container.innerHTML = '';
+        return;
+    }
 
-    document.getElementById('filters').innerHTML = uniqueOps.map(op => `
-        <label>
+    container.innerHTML = uniqueOps.map(op => `
+        <label class="chip">
             <input type="checkbox" value="${op}" checked onchange="renderTable()">
             ${op}
         </label>
     `).join('');
 }
 
-// Render Table
 function renderTable() {
     let search = document.getElementById('src1').value.toLowerCase().trim();
     let selected = Array.from(document.querySelectorAll('#filters input:checked')).map(c => c.value);
 
     let filtered = data.filter(x =>
         x.awb.toLowerCase().includes(search) &&
-        selected.includes(x.op)
+        (selected.length === 0 || selected.includes(x.op))
     );
 
-    document.getElementById('tableBody').innerHTML = filtered.map(x => `
+    const tbody = document.getElementById('tableBody');
+    
+    if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="2" class="empty-state">Tidak ada data yang cocok.</td></tr>`;
+        window.currentAwbList = [];
+        return;
+    }
+
+    tbody.innerHTML = filtered.map(x => `
         <tr>
-            <td><b>${x.awb}</b></td>
-            <td style="color:var(--primary); font-weight:bold">${x.op}</td>
+            <td><code style="font-size:14px; font-weight:600">${x.awb}</code></td>
+            <td><span class="badge-op">${x.op}</span></td>
         </tr>
     `).join('');
 
     window.currentAwbList = filtered.map(x => x.awb);
 }
 
-// Copy
 function copyAwb() {
     if (!window.currentAwbList || window.currentAwbList.length === 0) {
-        return alert('Data tidak ditemukan!');
+        return alert('Tidak ada data untuk disalin!');
     }
 
-    navigator.clipboard.writeText(window.currentAwbList.join('\n'))
-        .then(() => alert('✅ List AWB berhasil disalin!'));
+    const textToCopy = window.currentAwbList.join('\n');
+    navigator.clipboard.writeText(textToCopy).then(() => {
+        const btn = document.querySelector('.btn');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '✅ TERSALIN!';
+        btn.style.background = '#059669';
+        
+        setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.style.background = '';
+        }, 2000);
+    });
 }
 </script>
 
